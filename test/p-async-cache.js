@@ -109,7 +109,7 @@ test('allowStale', t => {
 
   return run(0, 1, false, 'stale = false')
   .then(() => {
-    return delay(100)
+    return delay(105)
   })
   .then(() => {
     return run(0, 1, true, 'stale = true')
