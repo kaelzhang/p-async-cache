@@ -14,7 +14,7 @@
 
 # p-async-cache
 
-<!-- description -->
+Cache the promise lookups and avoid fetching the same thing more than necessary.
 
 ## Install
 
@@ -25,8 +25,87 @@ $ npm install p-async-cache --save
 ## Usage
 
 ```js
-const p_async_cache = require('p-async-cache')
+const PAC = require('p-async-cache')
+
+let counter = 0
+const cache = new PAC({
+  async load (userId) {
+    counter ++
+    return await getUserFromRemote(userId)
+  }
+})
+
+function get () {
+  cache.get(123).then(({value}) => {
+    console.log(value, counter)
+  })
+}
+
+get()
+get()
+get()
+
+// [object User] 1
+// [object User] 1 (The counter still be 1)
 ```
+
+## new AC(options)
+
+- **options** `Object=`
+  - stale `Boolean` whether allow stale value
+  - stringify `function()=JSON.stringify` method to serialize the `params` to a cache key.
+  - load `AsyncFunction(...params)|function(...params):Promise|function(...params)` accepts a normal synchronous function, a function that returns a promise, or an async function, and the `params` will be the parameters of the `.get(...params)` method.
+  - other options that [lru-cache](https://www.npmjs.com/package/lru-cache) supports
+
+### Example for `options.stale`
+
+```js
+const delay = require('delay')
+const cache = new AC({
+  stale: true,
+  maxAge: 100,
+  load (a, b) {
+    return delay(1).then(() => a + b)
+  }
+})
+
+cache.get(1, 2)
+.then(({value, stale}) => {
+  console.log(value)      // 3
+  console.log(stale)      // false
+
+  // Delay a timespan which is bigger than `maxAge`
+  return delay(101).then(() => cache.get(1, 2))
+})
+.then(({value, stale}) => {
+  console.log(value)      // 3
+  console.log(stale)      // true (the value is stale)
+
+  return delay(10).then(() => cache.get(1, 2))
+})
+.then(({value, stale}) => {
+  console.log(value)      // 3
+  console.log(stale)      // false (if the value is found as stale, it will refresh the value in the background)
+})
+```
+
+## .get(...params)
+
+Returns `Promise`
+
+Lookup the value in the cache,
+
+- if found, then return.
+- if not found,
+  - if allow stale values, and the value is stale, then return the value, and refresh value in background.
+  - or load the value with `load(...params)`
+
+## Other methods of `lru-cache`
+
+- `.reset()`
+- `.has(...params)`
+- `.peek(...params)`
+- `.del(...params)`
 
 ## License
 
