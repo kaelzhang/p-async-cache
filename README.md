@@ -43,7 +43,6 @@ function get () {
 
 get()
 get()
-get()
 
 // [object User] 1
 // [object User] 1 (The counter still be 1)
