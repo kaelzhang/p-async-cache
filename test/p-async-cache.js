@@ -97,19 +97,22 @@ test('allowStale', t => {
     }, TIMES)
   }
 
-  function run (input, output, stale = false) {
+  function run (input, output, stale = false, message) {
     return create(input)
     .then((result) => {
-      t.deepEqual(result, value_times({value:output, stale}, TIMES))
+      t.deepEqual(
+        result,
+        value_times({value:output, stale}, TIMES),
+        message)
     })
   }
 
-  return run(0, 1)
+  return run(0, 1, false, 'stale = false')
   .then(() => {
     return delay(100)
   })
   .then(() => {
-    return run(0, 1, true)
+    return run(0, 1, true, 'stale = true')
   })
 })
 
