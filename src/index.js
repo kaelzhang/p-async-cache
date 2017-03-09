@@ -1,5 +1,4 @@
 const LRU = require('lru-cache')
-const delegate = require('delegates')
 const assert = require('assert')
 const Queue = require('pending-queue')
 
