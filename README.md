@@ -25,7 +25,7 @@ $ npm install p-async-cache --save
 ## Usage
 
 ```js
-const PAC = require('p-async-cache')
+import PAC from 'p-async-cache'
 
 let counter = 0
 const cache = new PAC({
@@ -59,7 +59,8 @@ get()
 ### Example for `options.stale`
 
 ```js
-const delay = require('delay')
+import delay from 'delay'
+
 const cache = new AC({
   stale: true,
   maxAge: 100,
@@ -90,6 +91,8 @@ cache.get(1, 2)
 
 ## .get(...params)
 
+- **params** `any` that will be passed into `options.load(...params)`
+
 Returns `Promise`
 
 Lookup the value in the cache,
@@ -97,7 +100,7 @@ Lookup the value in the cache,
 - if found, then return.
 - if not found,
   - if allow stale values, and the value is stale, then return the value, and refresh value in background.
-  - or load the value with `load(...params)`
+  - otherwise, load the value with `load(...params)`
 
 ## Other methods of `lru-cache`
 

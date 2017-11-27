@@ -20,6 +20,7 @@
 *.rdb
 *.db
 nohup.out
+package-lock.json
 
 # OS or Editor folders
 .DS_Store
